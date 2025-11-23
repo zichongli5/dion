@@ -60,11 +60,12 @@ class Muon(Optimizer):
         weight_decay: float = 0.01,
         cautious_wd: bool = False,
         epsilon: float = 1e-8,
-        nesterov: bool = False,
-        adjust_lr: Optional[str] = "spectral_norm",
+        nesterov: bool = True,
+        adjust_lr: Optional[str] = "rms_norm",
         flatten: bool = False,
         use_triton: bool = False,
         newton_schulz_func: Optional[Callable] = None,
+        muon_mode: str = "normal",
     ):
         # Check hyperparameters
         if lr < 0.0:
@@ -627,7 +628,7 @@ def adjust_lr_rms_norm(lr, param_shape, flatten):
         fan_in = math.prod(param_shape[1:])
     else:
         fan_out, fan_in = param_shape[-2:]
-    adjusted_ratio = 0.2 * math.sqrt(max(fan_out, fan_in))
+    adjusted_ratio = 0.4 * math.sqrt(max(fan_out, fan_in))
     adjusted_lr = lr * adjusted_ratio
     return adjusted_lr
 
