@@ -5,4 +5,4 @@ from .dion_reference import Dion as DionReference
 from .muon import Muon
 from .muon_reference import Muon as MuonReference
 from .dion2 import Dion2
-from .normuon import Normuon
+from .normuon import NorMuon
