@@ -181,13 +181,15 @@ class Dion2(Optimizer):
     
     def state_dict(self):
         state = super().state_dict()
-        # Drop placeholder states that carry no tensors (e.g., non-owner momentum_full=None)
-        state["state"] = {
-            pid: st
-            for pid, st in state["state"].items()
-            if any(torch.is_tensor(v) for v in st.values())
-        }
+        cleaned = {}
+        for pid, st in state["state"].items():
+            # drop empty momentum_full placeholders (non-owner ranks)
+            if st.get("momentum_full") is None:
+                st = {k: v for k, v in st.items() if k != "momentum_full"}
+            cleaned[pid] = st
+        state["state"] = cleaned
         return state
+    
     def _get_or_initialize_dion2_state_layer(self, param: Tensor) -> dict:
         """
         Layer-sharded momentum state for dion2:
