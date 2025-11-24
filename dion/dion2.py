@@ -76,6 +76,7 @@ class Dion2(Optimizer):
         flatten: bool = False,
         use_triton: bool = False,
         newton_schulz_func: Optional[Callable] = None,
+        muon_mode: str = "normal",
     ):
         # Chenk hyperparameter
         if lr < 0.0:
@@ -177,7 +178,16 @@ class Dion2(Optimizer):
         runtime.run()
 
         return loss
-
+    
+    def state_dict(self):
+        state = super().state_dict()
+        # Drop placeholder states that carry no tensors (e.g., non-owner momentum_full=None)
+        state["state"] = {
+            pid: st
+            for pid, st in state["state"].items()
+            if any(torch.is_tensor(v) for v in st.values())
+        }
+        return state
     def _get_or_initialize_dion2_state_layer(self, param: Tensor) -> dict:
         """
         Layer-sharded momentum state for dion2:
