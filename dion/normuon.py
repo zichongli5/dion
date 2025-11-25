@@ -630,7 +630,7 @@ def normuon_normalization(
         u_sq.mean(dim=-1, keepdim=True)  # Shape: [*, 1]
         for u_sq in U_sq
     ]
-    torch._foreach_lerp(V, neuron_norms, 1 - muon_beta2)  # Update variance neuron buffer
+    torch._foreach_lerp_(V, neuron_norms, 1 - muon_beta2)  # Update variance neuron buffer
     
     denom = torch._foreach_sqrt(V)               # list of sqrt(v)
     torch._foreach_add_(denom, 1e-8)             # denom[i] += 1e-8
