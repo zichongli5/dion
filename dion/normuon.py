@@ -216,6 +216,7 @@ class NorMuon(Optimizer):
             muon_update_args = dict(
                 lr=torch.tensor(group["lr"]),
                 momentum=torch.tensor(group["mu"]),
+                muon_beta2=torch.tensor(group["muon_beta2"]),
                 weight_decay=torch.tensor(group["weight_decay"]),
                 epsilon=torch.tensor(group["epsilon"]),
                 nesterov=group["nesterov"],
